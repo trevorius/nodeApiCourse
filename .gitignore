@@ -136,7 +136,7 @@ build/Release
 
 # Dependency directories
 node_modules/
-#!node_modules/functions.js
+!node_modules/functions.js
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
