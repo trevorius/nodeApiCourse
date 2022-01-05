@@ -3,7 +3,14 @@ const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
+const {error,success } = require('./app/services/functions');
+const membersService = require('./app/services/members');
+
 app.use(morgan('dev'));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }))
+// parse application/json
+app.use(bodyParser.json())
 
 const members = [
     {
@@ -21,7 +28,10 @@ const members = [
 ];
 
 app.get('/api/v1/members/:id', (req, res) => {
-    res.json(success(members[(req.params.id - 1)]));
+    const index = membersService.getIndex(req.params.id, members);
+    if (typeof(index) === 'string' )
+        res.json(error(index));
+    res.json(success(members[index]));
 });
 
 app.get('/api/v1/members', (req, res) => {
@@ -33,22 +43,25 @@ app.get('/api/v1/members', (req, res) => {
     }
     else res.json(success(members));
 });
+app.post('/api/v1/members', (req,res) => {
 
+
+    if (req.body.name){
+        if (!membersService.nameAllreadyExists(req.body.name,members)){
+
+        let newMember = membersService.createNewMember(req.body.name,members);
+
+        res.json(success(newMember));
+        }
+        else res.json(error("name allready exists"));
+    }
+    else{
+        res.json(error("invalid name parameter"))
+
+    }
+})
 
 
 
 
 app.listen(3000, () => console.log('Server started on port 3000'));
-
-function success(result){
-    return {
-        status: 'success',
-        result: result
-    }
-}
-function error(message){
-    return {
-        status: 'error',
-        message: message
-    }
-}
