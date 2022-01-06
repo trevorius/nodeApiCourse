@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const config = require('./config');
 
 const {error,success,createId } = require('./app/services/functions');
 const membersService = require('./app/services/members');
@@ -88,6 +89,6 @@ MembersRouter.route('/')
         }
     })
 
-app.use('/api/v1/members', MembersRouter);
+app.use(config.rootApi+'members', MembersRouter);
 
-app.listen(3000, () => console.log('Server started on port 3000'));
+app.listen(config.port, () => console.log('Server started on port 3000'));
