@@ -125,12 +125,6 @@ db.connect((err) => {
                             }
                         }
                     });
-
-                    // if (!membersService.nameAllreadyExists(req.body.name,members)){
-                    //     let newMember = membersService.createNewMember(req.body.name,members);
-                    //     res.json(success(newMember));
-                    // }
-                    // else res.json(error("name allready exists"));
                 }
                 else{
                     res.json(error("invalid name parameter"))
