@@ -11,3 +11,7 @@ exports.error = (message) => {
         message: message
     }
 }
+
+exports.createId= (arrayOfIdedElements) => {
+    return arrayOfIdedElements[arrayOfIdedElements.length-1].id + 1;
+}

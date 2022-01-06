@@ -1,3 +1,5 @@
+const {createId} = require('./functions');
+
 exports.nameAllreadyExists = (name,members) => {
     for (let i = 0; i < members.length; i++) {
         if (members[i].name === name) {
@@ -8,8 +10,9 @@ exports.nameAllreadyExists = (name,members) => {
 };
 
 exports.createNewMember = (name,members) => {
+    const id = createId(members);
     let newMember = {
-        id: members.length + 1,
+        id: id,
         name: name
     };
     members.push(

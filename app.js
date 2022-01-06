@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
-const {error,success } = require('./app/services/functions');
+const {error,success,createId } = require('./app/services/functions');
 const membersService = require('./app/services/members');
 
 app.use(morgan('dev'));
@@ -34,6 +34,38 @@ app.get('/api/v1/members/:id', (req, res) => {
     res.json(success(members[index]));
 });
 
+app.put('/api/v1/members/:id', (req, res) => {
+    const index = membersService.getIndex(req.params.id, members);
+    if (typeof(index) === 'string' )
+        res.json(error(index));
+    else{
+        let member = members[index];
+        let nameAlreadyExists = false;
+        for (let i = 0; i < members.length; i++) {
+            if (members[i].name === req.body.name && members[i].id !== req.params.id) {
+                    nameAlreadyExists = true;
+                break;
+            }
+        }
+        if(nameAlreadyExists)
+            res.json(error('Name already exists'));
+        else {
+            members[index].name = req.body.name;
+            res.json(success(true));
+        }
+    }
+});
+
+app.delete('/api/v1/members/:id', (req, res) => {
+    const index = membersService.getIndex(req.params.id, members);
+    if (typeof(index) === 'string' )
+        res.json(error(index));
+    else {
+        members.splice(index, 1);
+        res.json(success(members));
+    }
+});
+
 app.get('/api/v1/members', (req, res) => {
 
     if(req.query.max !=undefined && req.query.max >0){
@@ -44,14 +76,10 @@ app.get('/api/v1/members', (req, res) => {
     else res.json(success(members));
 });
 app.post('/api/v1/members', (req,res) => {
-
-
     if (req.body.name){
         if (!membersService.nameAllreadyExists(req.body.name,members)){
-
-        let newMember = membersService.createNewMember(req.body.name,members);
-
-        res.json(success(newMember));
+            let newMember = membersService.createNewMember(req.body.name,members);
+            res.json(success(newMember));
         }
         else res.json(error("name allready exists"));
     }
