@@ -12,6 +12,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/json
 app.use(bodyParser.json())
 
+let MembersRouter = express.Router();
+
 const members = [
     {
         id: 1,
@@ -27,69 +29,65 @@ const members = [
     },
 ];
 
-app.get('/api/v1/members/:id', (req, res) => {
-    const index = membersService.getIndex(req.params.id, members);
-    if (typeof(index) === 'string' )
-        res.json(error(index));
-    res.json(success(members[index]));
-});
-
-app.put('/api/v1/members/:id', (req, res) => {
-    const index = membersService.getIndex(req.params.id, members);
-    if (typeof(index) === 'string' )
-        res.json(error(index));
-    else{
-        let member = members[index];
-        let nameAlreadyExists = false;
-        for (let i = 0; i < members.length; i++) {
-            if (members[i].name === req.body.name && members[i].id !== req.params.id) {
-                    nameAlreadyExists = true;
-                break;
+MembersRouter.route('/:id')
+    // get a member by id
+    .get((req, res) => {
+        const index = membersService.getIndex(req.params.id, members);
+        if (typeof(index) === 'string' )
+            res.json(error(index));
+        res.json(success(members[index]));
+    })
+    // update a member by id
+    .put((req, res) => {
+        const index = membersService.getIndex(req.params.id, members);
+        if (typeof(index) === 'string' )
+            res.json(error(index));
+        else{
+            let member = members[index];
+            let nameAlreadyExists = membersService.nameAllreadyExists(req.body.name, members,req.params.id)
+            if(nameAlreadyExists)
+                res.json(error('Name already exists'));
+            else {
+                members[index].name = req.body.name;
+                res.json(success(true));
             }
         }
-        if(nameAlreadyExists)
-            res.json(error('Name already exists'));
+    })
+    // delete a member by id
+    .delete((req, res) => {
+        const index = membersService.getIndex(req.params.id, members);
+        if (typeof(index) === 'string' )
+            res.json(error(index));
         else {
-            members[index].name = req.body.name;
-            res.json(success(true));
+            members.splice(index, 1);
+            res.json(success(members));
         }
-    }
-});
+    });
 
-app.delete('/api/v1/members/:id', (req, res) => {
-    const index = membersService.getIndex(req.params.id, members);
-    if (typeof(index) === 'string' )
-        res.json(error(index));
-    else {
-        members.splice(index, 1);
-        res.json(success(members));
-    }
-});
-
-app.get('/api/v1/members', (req, res) => {
-
-    if(req.query.max !=undefined && req.query.max >0){
-        res.json(success(members.slice(0, req.query.max)));
-    } else if (req.query.max != undefined){
-        res.json(error("invalid max parameter"))
-    }
-    else res.json(success(members));
-});
-app.post('/api/v1/members', (req,res) => {
-    if (req.body.name){
-        if (!membersService.nameAllreadyExists(req.body.name,members)){
-            let newMember = membersService.createNewMember(req.body.name,members);
-            res.json(success(newMember));
+MembersRouter.route('/')
+    // get all members
+    .get((req, res) => {
+        if(req.query.max !=undefined && req.query.max >0){
+            res.json(success(members.slice(0, req.query.max)));
+        } else if (req.query.max != undefined){
+            res.json(error("invalid max parameter"))
         }
-        else res.json(error("name allready exists"));
-    }
-    else{
-        res.json(error("invalid name parameter"))
+        else res.json(success(members));
+    })
+    // add a member
+    .post((req,res) => {
+        if (req.body.name){
+            if (!membersService.nameAllreadyExists(req.body.name,members)){
+                let newMember = membersService.createNewMember(req.body.name,members);
+                res.json(success(newMember));
+            }
+            else res.json(error("name allready exists"));
+        }
+        else{
+            res.json(error("invalid name parameter"))
+        }
+    })
 
-    }
-})
-
-
-
+app.use('/api/v1/members', MembersRouter);
 
 app.listen(3000, () => console.log('Server started on port 3000'));

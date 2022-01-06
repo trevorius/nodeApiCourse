@@ -1,9 +1,9 @@
 const {createId} = require('./functions');
 
-exports.nameAllreadyExists = (name,members) => {
+exports.nameAllreadyExists = (name,members, id= null) => {
     for (let i = 0; i < members.length; i++) {
-        if (members[i].name === name) {
-            return true;
+        if (members[i].name === name && members[i].id !== id) {
+                return true;
         }
     }
     return false;
