@@ -28,7 +28,7 @@ let Members = class {
                 db.query('SELECT * FROM members limit 0, ?',[parseInt(max)])
                     .then(result => next(result))
                     .catch(err => next(err));
-             else if (max != undefined)
+            else if (max != undefined)
                 next(new Error("invalid max parameter"))
             else
                 db.query('SELECT * FROM members')
@@ -37,4 +37,92 @@ let Members = class {
         })
     }
 
+    static add(name){
+        return new Promise((next) => {
+            if (name && name.trim() != '') {
+                name = name.trim()
+                // check if name already exists
+                db.query('Select * from members where name = ?', [name])
+                    .then(result => {
+                        if (result.length > 0)
+                            next(new Error('Name already exists'));
+                        else {
+                            return db.query('INSERT INTO members (name) VALUES (?)', [name])
+                        }
+                    })
+                    .then(() => {
+                        return db.query('select * from members where name = ?', [name])
+                    })
+                    .then(result => {
+                        next(result[0])
+                    })
+                    .catch((err) => next(err));
+            }
+            else{
+                next(new Error("invalid name parameter"))
+            }
+        })
+    }
+
+    static update(id,name) {
+        return new Promise((next) => {
+            if (name && name.trim() != '') {
+                name = name.trim()
+                // find member by id
+                db.query('SELECT * FROM members WHERE id = ?',[id])
+                .then(result => {
+                    if(result[0] == undefined)
+                        next(new Error('invalid id'));
+                    else
+                    {
+                        //check name doesn't already exist
+                        return db.query('SELECT * from Members where name = ? and id != ?', [name, id])
+                    }
+                })
+                .then(result => {
+                    if (result.length > 0)
+                        next(new Error('name already exists'));
+                    else {
+                        // update member
+                        return db.query('UPDATE members SET name = ? WHERE id = ?', [name, id]);
+                    }
+                })
+                .then(()=>{
+                    return db.query('SELECT * FROM members WHERE id = ?',[id])
+                })
+                .then(result => {
+                    next({"message":'member updated',
+                        "updatedMember": result[0]})
+                })
+                .catch(next => next(err.message))
+            }
+            else{
+                next(new Error('specify new name'))
+            }
+        })
+    }
+
+    static delete(id){
+        return new Promise ((next) => {
+            let deletedMember;
+            // find member by id
+            db.query('SELECT * FROM members WHERE id = ?',[id])
+                .then(result => {
+                    if (result[0] == undefined)
+                        next(new Error('invalid id'));
+                    else
+                        deletedMember = result[0];
+                        // delete member
+                        return db.query('DELETE FROM members WHERE id = ?', [id])
+                })
+                .then(()=>{
+                    next({"message":'member deleted',
+                        "deletedMember": deletedMember})
+                })
+                .catch(next => next(err.message))
+
+        })
+
+        
+    }
 }
