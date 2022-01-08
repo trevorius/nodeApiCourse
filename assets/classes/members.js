@@ -1,4 +1,4 @@
-const {createId} = require('./functions');
+const {createId} = require('../functions');
 
 exports.nameAllreadyExists = (name,members, id= null) => {
     for (let i = 0; i < members.length; i++) {
