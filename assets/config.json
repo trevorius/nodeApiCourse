@@ -6,5 +6,12 @@
     "user": "root",
     "password": "",
     "database": "nodecourse"
+  },
+  "errors": {
+    "ConnectionError": "Connection Error",
+    "InvalidId": "Invalid ID",
+    "InvalidNameParameter": "Invalid name parameter",
+    "NameAlreadyExists": "Name already exists",
+    "InvalidMaxValue": "Invalid max value"
   }
 }

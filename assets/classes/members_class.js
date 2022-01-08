@@ -14,7 +14,7 @@ let Members = class {
             db.query(`SELECT * FROM members WHERE id = ?`,[id])
                 .then(result => {
                     if(result[0] == undefined)
-                        next(new Error('Member not found'))
+                        next(new Error(config.errors.InvalidId))
                     else
                         next(result[0])
                 })
@@ -29,7 +29,7 @@ let Members = class {
                     .then(result => next(result))
                     .catch(err => next(err));
             else if (max != undefined)
-                next(new Error("invalid max parameter"))
+                next(new Error(config.errors.InvalidMaxValue))
             else
                 db.query('SELECT * FROM members')
                     .then(result => next(result))
@@ -45,7 +45,7 @@ let Members = class {
                 db.query('Select * from members where name = ?', [name])
                     .then(result => {
                         if (result.length > 0)
-                            next(new Error('Name already exists'));
+                            next(new Error(config.errors.NameAlreadyExists));
                         else {
                             return db.query('INSERT INTO members (name) VALUES (?)', [name])
                         }
@@ -59,7 +59,7 @@ let Members = class {
                     .catch((err) => next(err));
             }
             else{
-                next(new Error("invalid name parameter"))
+                next(new Error(config.errors.InvalidNameParameter))
             }
         })
     }
@@ -72,7 +72,7 @@ let Members = class {
                 db.query('SELECT * FROM members WHERE id = ?',[id])
                 .then(result => {
                     if(result[0] == undefined)
-                        next(new Error('invalid id'));
+                        next(new Error(config.errors.InvalidId));
                     else
                     {
                         //check name doesn't already exist
@@ -81,7 +81,7 @@ let Members = class {
                 })
                 .then(result => {
                     if (result.length > 0)
-                        next(new Error('name already exists'));
+                        next(new Error(config.errors.NameAlreadyExists));
                     else {
                         // update member
                         return db.query('UPDATE members SET name = ? WHERE id = ?', [name, id]);
@@ -97,7 +97,7 @@ let Members = class {
                 .catch(next => next(err.message))
             }
             else{
-                next(new Error('specify new name'))
+                next(new Error(config.errors.InvalidNameParameter))
             }
         })
     }
@@ -109,7 +109,7 @@ let Members = class {
             db.query('SELECT * FROM members WHERE id = ?',[id])
                 .then(result => {
                     if (result[0] == undefined)
-                        next(new Error('invalid id'));
+                        next(new Error(config.errors.InvalidId));
                     else
                         deletedMember = result[0];
                         // delete member

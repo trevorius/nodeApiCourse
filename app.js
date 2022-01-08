@@ -58,12 +58,12 @@ const db = mysql.createConnection({
 
     app.use(config.rootApi+'members', MembersRouter);
 
-    app.listen(config.port, () => console.log('Server started on port 3000'));
+    app.listen(config.port, () => console.log(`Server started on port: ${config.port}`));
 
 
 
 }).catch((err)=>{
-    console.log("error in connection");
+    console.log(config.errors.ConnectionError);
     console.log(err.message)
 })
 
