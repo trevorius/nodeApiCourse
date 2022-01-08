@@ -1,8 +1,10 @@
 const express = require('express');
 const expressOasGenerator = require('express-oas-generator');
+const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan')('dev');
 const config = require('./assets/config.json');
+const swaggerDocument = require('./swagger.json');
 
 const {error,success, checkAndChange} = require('./assets/functions');
 const membersService = require('./assets/classes/members');
@@ -28,6 +30,7 @@ const db = mysql.createConnection({
     let MembersRouter = express.Router();
 
     const Members = require('./assets/classes/members_class')(db,config);
+    app.use(config.rootApi + 'api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     MembersRouter.route('/:id')
         // get a member by id

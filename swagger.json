@@ -1,73 +1,95 @@
 {
-  "openapi": "3.0.0",
+  "definitions": {},
   "info": {
     "title": "nodecourse",
     "version": "1.0.0",
     "license": {
       "name": "ISC"
     },
-    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3)."
+    "description": "REST Api to manage user names form course"
   },
+  "basePath": "/api/v1/",
+  "host": "localhost:3000",
+  "tags": [
+    {
+      "name": "members",
+      "description": "Operations about users"
+    }
+  ],
   "paths": {
-    "/api/v1/members/{id}": {
+    "members/{id}": {
       "get": {
-        "summary": "/api/v1/members/{id}",
+        "tags": ["members"],
+        "summary": "members/{id}",
+        "consumes": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "required": true
           }
         ],
         "responses": {},
         "tags": []
       },
       "put": {
-        "summary": "/api/v1/members/{id}",
+        "tags": ["members"],
+        "summary": "members/{id}",
+        "consumes": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "required": true
           }
         ],
         "responses": {},
         "tags": []
       },
       "delete": {
-        "summary": "/api/v1/members/{id}",
+        "tags": ["members"],
+        "summary": "members/{id}",
+        "consumes": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "required": true
           }
         ],
         "responses": {},
         "tags": []
       }
     },
-    "/api/v1/members": {
+    "members": {
       "get": {
-        "summary": "/api/v1/members",
+        "tags": ["members"],
+        "summary": "members",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
         "responses": {},
         "tags": []
       },
       "post": {
-        "summary": "/api/v1/members",
+        "tags": ["members"],
+        "summary": "members",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
         "responses": {},
         "tags": []
       }
     }
   },
+  "swagger": "2.0",
   "tags": []
 }
