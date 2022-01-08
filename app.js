@@ -1,4 +1,5 @@
 const express = require('express');
+const expressOasGenerator = require('express-oas-generator');
 const bodyParser = require('body-parser');
 const morgan = require('morgan')('dev');
 const config = require('./assets/config.json');
@@ -16,6 +17,7 @@ const db = mysql.createConnection({
 
     console.log('Connected to database');
     const app = express();
+    expressOasGenerator.init(app, {}); // to overwrite generated specification's values use second argument.
 
     app.use(morgan);
     // parse application/x-www-form-urlencoded
